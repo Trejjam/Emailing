@@ -1,0 +1,32 @@
+{
+	"name": "trejjam/emailing",
+	"description": "Send email over rabbitMQ",
+	"keywords": [
+		"nette",
+		"email",
+		"rabbitMQ"
+	],
+	"license": [
+		"MIT"
+	],
+	"authors": [
+		{
+			"name": "Jan Trejbal"
+		}
+	],
+	"require": {
+		"php": ">=5.3.1",
+		"ext-imap": "*",
+		"nette/nette": "~2.2",
+		"kdyby/rabbitmq": "@dev"
+	},
+	"require-dev": {
+		"nette/tester": "@dev"
+	},
+	"suggest": {
+		"kdyby/console": "to use CLI configurator"
+	},
+	"autoload": {
+		"classmap": ["src/Emailing"]
+	}
+}

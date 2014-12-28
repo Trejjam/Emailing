@@ -1,0 +1,1 @@
+﻿parameters:nette:	database:		dsn: 'mysql:host=localhost;dbname=tests'		user: tests		password: yZDcqCt82hdUTdaW
