@@ -47,7 +47,7 @@ class EmailingExtension extends Nette\DI\CompilerExtension implements DI\IConsum
 				],
 			],
 			'senders'     => [
-				'table'      => 'send__sender',
+				'table' => 'send__senders',
 				'id'         => 'id',
 				'email'      => 'email',
 				'configName' => 'config_name',
@@ -72,7 +72,8 @@ class EmailingExtension extends Nette\DI\CompilerExtension implements DI\IConsum
 		],
 		'rabbitmq' => [
 			'mailer'    => [
-				'templateDir' => '/presenters/templates/',
+				'templateDir'     => '/presenters/templates/',
+				'defaultTemplate' => 'emails/default.latte',
 			],
 			'imap'      => [
 				'sendFolder' => 'Sent.From web'
@@ -149,6 +150,12 @@ class EmailingExtension extends Nette\DI\CompilerExtension implements DI\IConsum
 							  'config' => $config['tables'],
 						  ]);
 
+		$senders = $builder->addDefinition($this->prefix('senders'))
+						   ->setClass('Trejjam\Emailing\Senders')
+						   ->addSetup('setConfig', [
+							   'config' => $config['tables'],
+						   ]);
+
 		$emailFactory = $builder->addDefinition($this->prefix('emailFactory'))
 								->setClass('Trejjam\Emailing\EmailFactory')
 								->addSetup('setConfig', [
@@ -163,7 +170,7 @@ class EmailingExtension extends Nette\DI\CompilerExtension implements DI\IConsum
 							   ]);
 
 		$rabbitmq = $builder->addDefinition($this->prefix('rabbit.mailer'))
-							->setClass('Trejjam\Emailing\Rabbitmq\RabbitMailer')
+			->setClass('Trejjam\Emailing\RabbitMq\Mailer')
 							->addSetup('setConfig', [
 								'config' => $config['rabbitmq'],
 							]);
@@ -173,6 +180,7 @@ class EmailingExtension extends Nette\DI\CompilerExtension implements DI\IConsum
 				'cliInstall' => 'CliInstall',
 				'cliImap'    => 'CliImap',
 				'cliGroups'  => 'CliGroups',
+				'cliSenders' => 'CliSenders',
 			];
 
 			foreach ($command as $k => $v) {
@@ -192,6 +200,11 @@ class EmailingExtension extends Nette\DI\CompilerExtension implements DI\IConsum
 				   ->addSetup("setCacheParams", ["cacheParams" => [
 					   Nette\Caching\Cache::EXPIRE => $config["cache"]["timeout"]
 				   ]]);
+
+			$senders->setArguments([$this->prefix("@cache")])
+					->addSetup("setCacheParams", ["cacheParams" => [
+						Nette\Caching\Cache::EXPIRE => $config["cache"]["timeout"]
+					]]);
 		}
 	}
 
@@ -217,7 +230,7 @@ class EmailingExtension extends Nette\DI\CompilerExtension implements DI\IConsum
 					'name' => $consumers[$k]['exchange'], 'type' => 'direct'
 				],
 				'queue'      => ['name' => $consumers[$k]['queue']],
-				'callback'   => ['@Trejjam\Emailing\Rabbitmq\RabbitMailer', $consumers[$k]['method']],
+				'callback' => ['@Trejjam\Emailing\RabbitMq\Mailer', $consumers[$k]['method']],
 			];
 		}
 

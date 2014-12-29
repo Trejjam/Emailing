@@ -18,7 +18,7 @@ class CliInstall extends Command
 	const
 		FILE_EMAILS_TABLE = 'send__emails',
 		FILE_GROUPS_TABLE = 'send__groups',
-		FILE_SENDER_LIST_TABLE = 'send__sender_list',
+		FILE_SENDER_LIST_TABLE = 'send__senders',
 		FILE_GROUP_EMAIL_TABLE = 'send__group_email';
 
 	/**

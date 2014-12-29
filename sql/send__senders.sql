@@ -17,10 +17,10 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Struktura tabulky `send__sender_list`
+-- Struktura tabulky `send__senders`
 --
 
-CREATE TABLE IF NOT EXISTS `send__sender_list` (
+CREATE TABLE IF NOT EXISTS `send__senders` (
 	`id`          INT(11)               NOT NULL,
 	`email`       VARCHAR(40)
 				  COLLATE utf8_czech_ci NOT NULL,
@@ -33,15 +33,15 @@ CREATE TABLE IF NOT EXISTS `send__sender_list` (
 	COLLATE =utf8_czech_ci;
 
 --
--- Klíče pro tabulku `send__sender_list`
+-- Klíče pro tabulku `send__senders`
 --
-ALTER TABLE `send__sender_list`
+ALTER TABLE `send__senders`
 ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `email` (`email`);
 
 --
--- AUTO_INCREMENT pro tabulku `send__sender_list`
+-- AUTO_INCREMENT pro tabulku `send__senders`
 --
-ALTER TABLE `send__sender_list`
+ALTER TABLE `send__senders`
 MODIFY `id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT =1;
 /*!40101 SET CHARACTER_SET_CLIENT = @OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS = @OLD_CHARACTER_SET_RESULTS */;

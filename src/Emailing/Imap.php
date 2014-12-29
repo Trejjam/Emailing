@@ -52,7 +52,7 @@ class Imap
 
 		$createName = NULL;
 		foreach ($nameArr as $v) {
-			$createName .= is_null($createName) ? "." : $this->getMailbox();
+			$createName .= !is_null($createName) ? "." : $this->getMailbox();
 			$createName .= $v;
 
 			if (!in_array($createName, $folders)) {

@@ -6,12 +6,12 @@
  * Time: 23:24
  */
 
-namespace Trejjam\Emailing\Rabbitmq;
+namespace Trejjam\Emailing\RabbitMq;
 
 use Nette,
 	Nette\Application\UI;
 
-class RabbitMailer
+class Mailer
 {
 
 	/**
@@ -30,86 +30,76 @@ class RabbitMailer
 	/**
 	 * @var \Trejjam\Emailing\EmailFactory
 	 */
-	protected $mailerFactory;
+	protected $emailFactory;
 	/**
 	 * @var \Trejjam\Emailing\ImapFactory
 	 */
 	protected $imapFactory;
-
+	/**
+	 * @var \Trejjam\Emailing\Senders
+	 */
+	protected $senders;
 
 	/**
 	 * @var array
 	 */
 	protected $config;
 
-	public function __construct(\Kdyby\RabbitMq\Connection $bunny, \Trejjam\Emailing\EmailFactory $mailerFactory, \Trejjam\Emailing\ImapFactory $imapFactory) {
+	public function __construct(\Kdyby\RabbitMq\Connection $bunny, \Trejjam\Emailing\EmailFactory $emailFactory, \Trejjam\Emailing\ImapFactory $imapFactory, \Trejjam\Emailing\Senders $senders) {
 		$this->bunny = $bunny;
 		$this->rabbitMailer = $this->bunny->getProducer('mailer');
 		$this->rabbitImap = $this->bunny->getProducer('imap');
-		$this->mailerFactory = $mailerFactory;
+		$this->emailFactory = $emailFactory;
 		$this->imapFactory = $imapFactory;
+		$this->senders = $senders;
 	}
 	public function setConfig(array $config) {
 		$this->config = $config;
 	}
 	/**
-	 * @param string      $template
-	 * @param array       $templateArr
-	 * @param string      $from
-	 * @param string      $to
-	 * @param string      $subject
-	 * @param string      $connection
-	 * @param bool|string $imap
+	 * @return Email
 	 */
-	public function sendMail($template, array $templateArr, $from, $to, $subject, $connection = 'default', $imap = FALSE) {
-		$result = [
-			'template'    => $template,
-			'templateArr' => $templateArr,
-			'from'        => $from,
-			'to'          => $to,
-			'subject'     => $subject,
-			'connection'  => $connection,
-			'imap'        => $imap
-		];
+	public function createEmail() {
+		$email = new Email($this->emailFactory, $this->imapFactory, $this->senders);
 
-		$this->rabbitMailer->publish(json_encode((object)$result));
+		return $email;
+	}
+
+	public function send(Email $email) {
+		$this->rabbitMailer->publish($email->getJson());
 	}
 	public function sendMailConsumer(\PhpAmqpLib\Message\AMQPMessage $message) {
 		$sendMail = json_decode($message->body);
 
 		$latte = new \Latte\Engine;
 
-		if (!isset($sendMail->templateArr->email)) {
-			$sendMail->templateArr->email = $sendMail->to;
-		}
-		if (!isset($sendMail->templateArr->subject)) {
-			$sendMail->templateArr->subject = $sendMail->subject;
+		$sendMail->templateArr->email = $sendMail->to;
+		$sendMail->templateArr->subject = $sendMail->subject;
+		if (!is_null($sendMail->unsubscribeLink)) {
+			$sendMail->templateArr->unsubscribeLink = $sendMail->unsubscribeLink;
 		}
 
 		$mail = new \Nette\Mail\Message;
 		$mail->setFrom($sendMail->from)
 			 ->addTo($sendMail->to)
-			 ->setHtmlBody($latte->renderToString($this->config["appDir"] . $this->config['mailer']['templateDir'] . $sendMail->template,
+			->setHtmlBody($latte->renderToString($this->config["appDir"] . $this->config['mailer']['templateDir'] . (is_null($sendMail->template) ? $this->config['mailer']['defaultTemplate'] : $sendMail->template),
 				 (array)$sendMail->templateArr
 			 ));
 
-		if (isset($sendMail->templateArr->unsubscribe)) {
-			$mail->setHeader('List-Unsubscribe', '<' . $sendMail->templateArr->unsubscribe . '>', TRUE);
-		}
-		if (isset($sendMail->templateArr->subscribe)) {
-			$mail->setHeader('List-Subscribe', '<' . $sendMail->templateArr->subscribe . '>', TRUE);
+		if (!is_null($sendMail->unsubscribeEmail) || !is_null($sendMail->unsubscribeLink)) {
+			$mail->setHeader('List-Unsubscribe', (!is_null($sendMail->unsubscribeEmail) ? '<mailto:' . $sendMail->unsubscribeEmail . '>' : '') . (!is_null($sendMail->unsubscribeEmail) && !is_null($sendMail->unsubscribeLink) ? ", " : "") . (!is_null($sendMail->unsubscribeLink) ? '<' . $sendMail->unsubscribeLink . '>' : ''), TRUE);
 		}
 		$mail->setSubject($sendMail->subject);
 
 		try {
-			$mailer = $this->mailerFactory->getConnection($sendMail->connection);
+			$mailer = $this->emailFactory->getConnection($sendMail->connection);
 
 			$mailer->send($mail);
 
 			dump($sendMail->to);
 
-			if ($sendMail->imap !== FALSE) {
-				$this->saveToImap($mail->generateMessage(), $this->config['imap']['sendFolder'], $sendMail->imap === TRUE ? $sendMail->connection : $sendMail->imap);
+			if ($sendMail->imapSave) {
+				$this->saveToImap($mail->generateMessage(), is_null($sendMail->imapFolder) ? $this->config['imap']['sendFolder'] : $sendMail->imapFolder, $sendMail->imapConnection);
 			}
 
 			return TRUE;
