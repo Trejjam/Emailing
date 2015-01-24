@@ -17,8 +17,12 @@
 	"require": {
 		"php": ">=5.3.1",
 		"ext-imap": "*",
-		"nette/nette": "~2.2",
-		"kdyby/rabbitmq": "@dev"
+		"nette/di": "~2.2",
+		"nette/utils": "~2.2",
+		"nette/database": "~2.2",
+		"nette/mail": "~2.2",
+		"latte/latte": "~2.2",
+		"kdyby/rabbitmq": "1.0.*@dev"
 	},
 	"require-dev": {
 		"nette/tester": "@dev"

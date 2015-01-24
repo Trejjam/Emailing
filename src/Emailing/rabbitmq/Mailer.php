@@ -9,6 +9,7 @@
 namespace Trejjam\Emailing\RabbitMq;
 
 use Nette,
+	Latte,
 	Nette\Application\UI;
 
 class Mailer
@@ -71,7 +72,7 @@ class Mailer
 	public function sendMailConsumer(\PhpAmqpLib\Message\AMQPMessage $message) {
 		$sendMail = json_decode($message->body);
 
-		$latte = new \Latte\Engine;
+		$latte = new Latte\Engine;
 
 		$sendMail->templateArr->email = $sendMail->to;
 		$sendMail->templateArr->subject = $sendMail->subject;
@@ -79,7 +80,7 @@ class Mailer
 			$sendMail->templateArr->unsubscribeLink = $sendMail->unsubscribeLink;
 		}
 
-		$mail = new \Nette\Mail\Message;
+		$mail = new Nette\Mail\Message;
 		$mail->setFrom($sendMail->from)
 			 ->addTo($sendMail->to)
 			->setHtmlBody($latte->renderToString($this->config["appDir"] . $this->config['mailer']['templateDir'] . (is_null($sendMail->template) ? $this->config['mailer']['defaultTemplate'] : $sendMail->template),

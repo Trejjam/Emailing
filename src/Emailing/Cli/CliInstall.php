@@ -22,7 +22,7 @@ class CliInstall extends Command
 		FILE_GROUP_EMAIL_TABLE = 'send__group_email';
 
 	/**
-	 * @var \Nette\Database\Context @inject
+	 * @var Nette\Database\Context @inject
 	 */
 	public $database;
 
