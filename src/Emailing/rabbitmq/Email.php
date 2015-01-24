@@ -8,8 +8,9 @@
 
 namespace Trejjam\Emailing\RabbitMq;
 
-use Nette;
-use Nette\Utils\Validators;
+use Nette,
+	Nette\Utils\Validators,
+	Trejjam;
 
 class Email
 {
@@ -17,6 +18,14 @@ class Email
 	protected $templateArr = [];
 
 	protected $connection = "default";
+	/**
+	 * @var Trejjam\Emailing\EmailFactory
+	 */
+	protected $emailFactory;
+	/**
+	 * @var Trejjam\Emailing\ImapFactory
+	 */
+	protected $imapFactory;
 	/**
 	 * @var \Trejjam\Emailing\Sender
 	 */
@@ -32,7 +41,7 @@ class Email
 	protected $unsubscribeEmail = NULL;
 	protected $unsubscribeLink  = NULL;
 
-	function __construct(\Trejjam\Emailing\EmailFactory $emailFactory, \Trejjam\Emailing\ImapFactory $imapFactory, \Trejjam\Emailing\Senders $senders) {
+	function __construct(Trejjam\Emailing\EmailFactory $emailFactory, Trejjam\Emailing\ImapFactory $imapFactory, Trejjam\Emailing\Senders $senders) {
 		$this->emailFactory = $emailFactory;
 		$this->imapFactory = $imapFactory;
 		$this->senders = $senders;
