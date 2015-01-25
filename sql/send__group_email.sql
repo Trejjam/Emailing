@@ -25,10 +25,10 @@ CREATE TABLE IF NOT EXISTS `send__group_email` (
 	`group_id` INT(11) NOT NULL,
 	`email_id` INT(11) NOT NULL
 )
-	ENGINE =InnoDB
-	AUTO_INCREMENT =1
-	DEFAULT CHARSET =utf8
-	COLLATE =utf8_czech_ci;
+	ENGINE = InnoDB
+	AUTO_INCREMENT = 1
+	DEFAULT CHARSET = utf8mb4
+	COLLATE = utf8mb4_unicode_ci;
 
 --
 -- Klíče pro tabulku `send__group_mail`
@@ -40,7 +40,7 @@ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `group_id_2` (`group_id`, `email_id`), AD
 -- AUTO_INCREMENT pro tabulku `send__group_mail`
 --
 ALTER TABLE `send__group_email`
-MODIFY `id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT =1;
+MODIFY `id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT = 1;
 
 --
 -- Omezení pro tabulku `send__group_mail`

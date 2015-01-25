@@ -21,16 +21,16 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `send__senders` (
-	`id`          INT(11)               NOT NULL,
+	`id`          INT(11)                    NOT NULL,
 	`email`       VARCHAR(40)
-				  COLLATE utf8_czech_ci NOT NULL,
+				  COLLATE utf8mb4_unicode_ci NOT NULL,
 	`config_name` VARCHAR(20)
-				  COLLATE utf8_czech_ci NOT NULL DEFAULT 'default'
+				  COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'default'
 )
-	ENGINE =InnoDB
-	AUTO_INCREMENT =1
-	DEFAULT CHARSET =utf8
-	COLLATE =utf8_czech_ci;
+	ENGINE = InnoDB
+	AUTO_INCREMENT = 1
+	DEFAULT CHARSET = utf8mb4
+	COLLATE = utf8mb4_unicode_ci;
 
 --
 -- Klíče pro tabulku `send__senders`
@@ -42,7 +42,7 @@ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `email` (`email`);
 -- AUTO_INCREMENT pro tabulku `send__senders`
 --
 ALTER TABLE `send__senders`
-MODIFY `id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT =1;
+MODIFY `id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT = 1;
 /*!40101 SET CHARACTER_SET_CLIENT = @OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS = @OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;

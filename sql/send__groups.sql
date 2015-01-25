@@ -21,17 +21,17 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `send__groups` (
-	`id`        INT(11)               NOT NULL,
-	`parent_id` INT(11)                        DEFAULT NULL,
+	`id`        INT(11)                    NOT NULL,
+	`parent_id` INT(11)                             DEFAULT NULL,
 	`name`      VARCHAR(60)
-				COLLATE utf8_czech_ci NOT NULL,
+				COLLATE utf8mb4_unicode_ci NOT NULL,
 	`type`      ENUM('public', 'private')
-				COLLATE utf8_czech_ci NOT NULL DEFAULT 'public'
+				COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'public'
 )
-	ENGINE =InnoDB
-	AUTO_INCREMENT =1
-	DEFAULT CHARSET =utf8
-	COLLATE =utf8_czech_ci;
+	ENGINE = InnoDB
+	AUTO_INCREMENT = 1
+	DEFAULT CHARSET = utf8mb4
+	COLLATE = utf8mb4_unicode_ci;
 
 --
 -- Klíče pro tabulku `send__groups`
@@ -43,7 +43,7 @@ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `name` (`name`), ADD KEY `parent_id` (`pa
 -- AUTO_INCREMENT pro tabulku `send__groups`
 --
 ALTER TABLE `send__groups`
-MODIFY `id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT =1;
+MODIFY `id` INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT = 1;
 
 --
 -- Omezení pro tabulku `send__groups`
